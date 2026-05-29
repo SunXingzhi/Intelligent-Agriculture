@@ -26,6 +26,7 @@
 #include "bh1750.h"
 #include "oled.h"
 #include "i2c.h"
+#include "sgp30.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,9 +92,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   OLED_Clear();
+
+  uint32_t  dat;
+  uint16_t  co2Data,TVOCData;
+  SGP30_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,10 +109,25 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LightData = BH1750_ReadLight();         // 读取光照强度
-    LightData_Hex = (uint32_t)LightData;    // float转换成整数
-    OLED_ShowNum(6,3,LightData_Hex,5,16);   // 显示光照强度
-		OLED_ShowString(72,3,(u8*)"lx");        // 显示光照强度单位lx
+    // 调试BH1750光照传感器
+    // LightData = BH1750_ReadLight();         // 读取光照强度
+    // LightData_Hex = (uint32_t)LightData;    // float转换成整数
+    // OLED_ShowNum(6,3,LightData_Hex,5,16);   // 显示光照强度
+		// OLED_ShowString(72,3,(u8*)"lx");        // 显示光照强度单位lx
+
+    // 调试SGP30 CO2传感器
+    SGP30_ad_write(0x20,0x08);
+    dat = SGP30_ad_read();
+    co2Data = (dat & 0xffff0000) >> 16;
+    TVOCData = dat & 0x0000ffff;
+    OLED_ShowString(0, 3, (u8*)"CO2:");
+    OLED_ShowNum(36, 3, co2Data, 5, 16);
+    OLED_ShowString(76, 3, (u8*)"ppm");
+
+    OLED_ShowString(0, 5, (u8*)"TVOC:");
+    OLED_ShowNum(40, 5, TVOCData, 5, 16);
+    OLED_ShowString(80, 5, (u8*)"ppb");
+    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
