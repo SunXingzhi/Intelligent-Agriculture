@@ -17,11 +17,11 @@ typedef unsigned long u32;
 #define Y_WIDTH 	64	    						  
 //-----------------OLED IIC??????----------------  					   
 
-#define OLED_SCLK_Clr() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_10,GPIO_PIN_RESET)//SCL IIC??????????
-#define OLED_SCLK_Set() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_10,GPIO_PIN_SET)
+#define OLED_SCLK_Clr() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_8,GPIO_PIN_RESET)//SCL IIC??????????
+#define OLED_SCLK_Set() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_8,GPIO_PIN_SET)
 
-#define OLED_SDIN_Clr() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_11,GPIO_PIN_RESET)//SDA IIC???????????
-#define OLED_SDIN_Set() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_11,GPIO_PIN_SET)
+#define OLED_SDIN_Clr() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_9,GPIO_PIN_RESET)//SDA IIC???????????
+#define OLED_SDIN_Set() HAL_GPIO_WritePin(GPIOB,GPIO_PIN_9,GPIO_PIN_SET)
 
  		     
 #define OLED_CMD  0	//§Õ????
