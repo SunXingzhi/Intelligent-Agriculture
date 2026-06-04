@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -27,6 +28,7 @@
 #include "oled.h"
 #include "i2c.h"
 #include "sgp30.h"
+#include "dht11.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,8 +60,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-float     LightData; // 光照强度（小数，单位：lx）
-uint32_t  LightData_Hex; // 光照强度（整数，单位：lx）
+// float     LightData; // 光照强度（小数，单位：lx）
+// uint32_t  LightData_Hex; // 光照强度（整数，单位：lx）
 /* USER CODE END 0 */
 
 /**
@@ -93,13 +95,18 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   OLED_Clear();
 
-  uint32_t  dat;
-  uint16_t  co2Data,TVOCData;
-  SGP30_Init();
+  // uint32_t  dat;
+  // uint16_t  co2Data,TVOCData;
+  uint8_t   temperature = 1;  //温度
+  uint8_t   humidity = 1;     //湿度
+  uint8_t   aTXbuf[32];       //串口发送缓存数组
+  // SGP30_Init();
+  DHT11_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,17 +123,28 @@ int main(void)
 		// OLED_ShowString(72,3,(u8*)"lx");        // 显示光照强度单位lx
 
     // 调试SGP30 CO2传感器
-    SGP30_ad_write(0x20,0x08);
-    dat = SGP30_ad_read();
-    co2Data = (dat & 0xffff0000) >> 16;
-    TVOCData = dat & 0x0000ffff;
-    OLED_ShowString(0, 3, (u8*)"CO2:");
-    OLED_ShowNum(36, 3, co2Data, 5, 16);
-    OLED_ShowString(76, 3, (u8*)"ppm");
+    // SGP30_ad_write(0x20,0x08);
+    // dat = SGP30_ad_read();
+    // co2Data = (dat & 0xffff0000) >> 16;
+    // TVOCData = dat & 0x0000ffff;
+    // OLED_ShowString(0, 3, (u8*)"CO2:");
+    // OLED_ShowNum(36, 3, co2Data, 5, 16);
+    // OLED_ShowString(76, 3, (u8*)"ppm");
+    //
+    // OLED_ShowString(0, 5, (u8*)"TVOC:");
+    // OLED_ShowNum(40, 5, TVOCData, 5, 16);
+    // OLED_ShowString(80, 5, (u8*)"ppb");
+    // HAL_Delay(1000);
 
-    OLED_ShowString(0, 5, (u8*)"TVOC:");
-    OLED_ShowNum(40, 5, TVOCData, 5, 16);
-    OLED_ShowString(80, 5, (u8*)"ppb");
+    // 调试DHT11 温湿度传感器
+    DHT11_Read_Data(&temperature , &humidity);
+    OLED_ShowString(0, 3, (u8*)"TMP:");
+    OLED_ShowNum(36, 3, temperature, 5, 16);
+    OLED_ShowString(76, 3, (u8*)"cel");
+
+    OLED_ShowString(0, 5, (u8*)"HUMI:");
+    OLED_ShowNum(40, 5, humidity, 5, 16);
+    OLED_ShowString(80, 5, (u8*)"ReH");
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */
