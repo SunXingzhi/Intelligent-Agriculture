@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tech.xuexinglab.demo.demos.web;
+package tech.xuexinglab.demo.demos.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
