@@ -109,7 +109,7 @@ public class EnvironmentController {
      * 批量添加数据
      * POST /api/environment/batch-add
      */
-    @PostMapping("/batch-add")
+    @PostMapping("/batch-add")   
     public ResponseEntity<Map<String, Object>> batchAddData(@RequestBody List<User> dataList) {
         List<User> savedDataList = environmentService.batchAddData(dataList);
         

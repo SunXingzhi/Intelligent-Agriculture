@@ -562,3 +562,74 @@ web/
 3. 确保 MySQL 数据库 `tomato_monitor` 已创建, 执行上方建表 SQL
 4. 修改 `application.properties` 中的数据库连接信息
 5. 运行 `DemoApplication.java`
+
+
+## 基础信息
+- **基础路径**: `http://localhost:8081/api/environment`
+- **数据格式**: JSON
+- **编码**: UTF-8
+
+---
+
+## 📋 接口总览
+
+| 接口名称 | HTTP方法 | 路径 | 功能说明 |
+|----------|----------|------|----------|
+| 添加数据 | POST | `/add` | 添加新的环境监测数据 |
+| 获取所有数据 | GET | `/all` | 获取所有环境监测数据 |
+| 获取最新数据 | GET | `/latest` | 获取最新的环境监测数据 |
+| 根据ID查询 | GET | `/detail/{id}` | 根据ID查询环境数据 |
+| 更新数据 | PUT | `/update/{id}` | 更新指定ID的环境数据 |
+| 删除数据 | DELETE | `/delete/{id}` | 删除指定ID的环境数据 |
+| 获取统计数据 | GET | `/statistics` | 获取环境数据的统计信息 |
+| 按温度范围查询 | GET | `/temperature` | 根据温度范围查询数据 |
+| 批量添加数据 | POST | `/batch-add` | 批量添加多条环境数据 |
+| 健康检查 | GET | `/health` | 检查服务运行状态 |
+
+### 添加一行数据
+postman:
+![alt text](添加环境数据.png)
+myql:
+![alt text](添加环境数据MYSQL.png)
+
+### 获取全部环境数据
+postman:
+![alt text](获取全部数据.png)
+### 获取最新环境数据(时间)
+postman:
+![alt text](获取最新数据.png)
+
+### 获取环境数据(id查找)
+postman:
+![alt text](根据id获取数据.png)
+
+### 更新某一环境数据(手动更改)
+postman:
+![alt text](更新某一id数据.png)
+mysql:
+id11的PH从6.8更新到8
+![alt text](更新后的数据.png)
+
+### 删除一行数据
+postman:
+![alt text](删除某一id数据.png)
+
+### 获取统计数据(平均值,最值)
+postman:
+![alt text](获取统计数据.png)
+
+### 批量添加数据
+postman:
+![alt text](批量添加数据.png)
+myaql:
+批量添加15 16 17三行数据
+![alt text](批量添加后.png)
+
+### 温度筛选数据
+postman:
+查询温度在20至30之间的数据
+![alt text](根据温度查询.png)
+
+### 系统运行状况
+postman:
+![alt text](监控系统运行状态.png)
