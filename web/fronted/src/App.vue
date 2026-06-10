@@ -1,47 +1,171 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import {
+  Monitor,
+  DataLine,
+  PieChart,
+  Bell,
+  Fold,
+  Expand
+} from '@element-plus/icons-vue'
+
+const router = useRouter()
+const route = useRoute()
+const isCollapsed = ref(false)
+
+const menuItems = [
+  { path: '/dashboard', icon: Monitor, title: '实时监控' },
+  { path: '/sensor-history', icon: DataLine, title: '传感器历史' },
+  { path: '/statistics', icon: PieChart, title: '统计分析' },
+  { path: '/alerts', icon: Bell, title: '告警中心' }
+]
+
+function navigateTo(path) {
+  router.push(path)
+}
+
+function toggleSidebar() {
+  isCollapsed.value = !isCollapsed.value
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <el-container class="app-layout">
+    <!-- 侧边栏 -->
+    <el-aside :width="isCollapsed ? '64px' : '220px'" class="app-sidebar">
+      <div class="sidebar-header">
+        <img src="@/assets/logo.svg" alt="logo" class="sidebar-logo" />
+        <span v-show="!isCollapsed" class="sidebar-title">番茄监测系统</span>
+      </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+      <el-menu
+        :default-active="route.path"
+        :collapse="isCollapsed"
+        background-color="#1d1e2c"
+        text-color="#a3a6b4"
+        active-text-color="#409eff"
+        :collapse-transition="false"
+        router
+      >
+        <el-menu-item
+          v-for="item in menuItems"
+          :key="item.path"
+          :index="item.path"
+          @click="navigateTo(item.path)"
+        >
+          <el-icon><component :is="item.icon" /></el-icon>
+          <template #title>{{ item.title }}</template>
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
 
-  <main>
-    <TheWelcome />
-  </main>
+    <!-- 主内容区 -->
+    <el-container class="app-main-container">
+      <el-header class="app-header">
+        <div class="header-left">
+          <el-icon class="collapse-btn" @click="toggleSidebar">
+            <Fold v-if="!isCollapsed" />
+            <Expand v-else />
+          </el-icon>
+          <span class="header-title">{{ route.meta.title || '实时监控' }}</span>
+        </div>
+        <div class="header-right">
+          <el-tag type="success" effect="plain" size="small">
+            <el-icon><Monitor /></el-icon>
+            系统运行中
+          </el-tag>
+        </div>
+      </el-header>
+
+      <el-main class="app-main">
+        <router-view />
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+.app-layout {
+  height: 100vh;
+  overflow: hidden;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.app-sidebar {
+  background-color: #1d1e2c;
+  transition: width 0.3s;
+  overflow: hidden;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.sidebar-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.sidebar-logo {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.app-sidebar .el-menu {
+  border-right: none;
+}
+
+.app-main-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.app-header {
+  height: 60px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.collapse-btn {
+  font-size: 20px;
+  cursor: pointer;
+  color: #606266;
+  transition: color 0.2s;
+}
+
+.collapse-btn:hover {
+  color: #409eff;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.app-main {
+  background-color: #f0f2f5;
+  overflow-y: auto;
+  padding: 0;
 }
 </style>

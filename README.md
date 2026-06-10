@@ -588,48 +588,48 @@ web/
 
 ### 添加一行数据
 postman:
-![alt text](添加环境数据.png)
+![alt text](picture/添加环境数据.png)
 myql:
-![alt text](添加环境数据MYSQL.png)
+![alt text](picture/添加环境数据MYSQL.png)
 
 ### 获取全部环境数据
 postman:
-![alt text](获取全部数据.png)
+![alt text](picture/获取全部数据.png)
 ### 获取最新环境数据(时间)
 postman:
-![alt text](获取最新数据.png)
+![alt text](picture/获取最新数据.png)
 
 ### 获取环境数据(id查找)
 postman:
-![alt text](根据id获取数据.png)
+![alt text](picture/根据id获取数据.png)
 
 ### 更新某一环境数据(手动更改)
 postman:
-![alt text](更新某一id数据.png)
+![alt text](picture/更新某一id数据.png)
 mysql:
 id11的PH从6.8更新到8
-![alt text](更新后的数据.png)
+![alt text](picture/更新后的数据.png)
 
 ### 删除一行数据
 postman:
-![alt text](删除某一id数据.png)
+![alt text](picture/删除某一id数据.png)
 
 ### 获取统计数据(平均值,最值)
 postman:
-![alt text](获取统计数据.png)
+![alt text](picture/获取统计数据.png)
 
 ### 批量添加数据
 postman:
-![alt text](批量添加数据.png)
+![alt text](picture/批量添加数据.png)
 myaql:
 批量添加15 16 17三行数据
-![alt text](批量添加后.png)
+![alt text](picture/批量添加后.png)
 
 ### 温度筛选数据
 postman:
 查询温度在20至30之间的数据
-![alt text](根据温度查询.png)
+![alt text](picture/根据温度查询.png)
 
 ### 系统运行状况
 postman:
-![alt text](监控系统运行状态.png)
+![alt text](picture/监控系统运行状态.png)
