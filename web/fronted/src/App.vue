@@ -7,7 +7,8 @@ import {
   PieChart,
   Bell,
   Fold,
-  Expand
+  Expand,
+  View
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -16,9 +17,9 @@ const isCollapsed = ref(false)
 
 const menuItems = [
   { path: '/dashboard', icon: Monitor, title: '实时监控' },
+  { path: '/detection', icon: View, title: '番茄长势检测' },
   { path: '/sensor-history', icon: DataLine, title: '传感器历史' },
   { path: '/statistics', icon: PieChart, title: '统计分析' },
-  { path: '/alerts', icon: Bell, title: '告警中心' }
 ]
 
 function navigateTo(path) {
