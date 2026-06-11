@@ -102,12 +102,15 @@ int main(void)
   OLED_Init();
   OLED_Clear();
 
-  // uint32_t  dat;
-  // uint16_t  co2Data,TVOCData;
+  uint32_t  dat;
+  uint16_t  co2Data,TVOCData;
   uint8_t   temperature = 1;  //温度
   uint8_t   humidity = 1;     //湿度
   uint8_t   aTXbuf[32];       //串口发送缓存数组
-  // SGP30_Init();
+  float     LightData;
+  uint32_t  LightData_Hex;
+  BH1750_Init();
+  SGP30_Init();
   DHT11_Init();
   /* USER CODE END 2 */
 
@@ -119,34 +122,23 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     // 调试BH1750光照传感器
-    // LightData = BH1750_ReadLight();         // 读取光照强度
-    // LightData_Hex = (uint32_t)LightData;    // float转换成整数
-    // OLED_ShowNum(6,3,LightData_Hex,5,16);   // 显示光照强度
-		// OLED_ShowString(72,3,(u8*)"lx");        // 显示光照强度单位lx
+    LightData = BH1750_ReadLight();         // 读取光照强度
+    LightData_Hex = (uint32_t)LightData;    // float转换成整数
 
     // 调试SGP30 CO2传感器
-    // SGP30_ad_write(0x20,0x08);
-    // dat = SGP30_ad_read();
-    // co2Data = (dat & 0xffff0000) >> 16;
-    // TVOCData = dat & 0x0000ffff;
-    // OLED_ShowString(0, 3, (u8*)"CO2:");
-    // OLED_ShowNum(36, 3, co2Data, 5, 16);
-    // OLED_ShowString(76, 3, (u8*)"ppm");
-    //
-    // OLED_ShowString(0, 5, (u8*)"TVOC:");
-    // OLED_ShowNum(40, 5, TVOCData, 5, 16);
-    // OLED_ShowString(80, 5, (u8*)"ppb");
-    // HAL_Delay(1000);
+    SGP30_ad_write(0x20,0x08);
+    dat = SGP30_ad_read();
+    co2Data = (dat & 0xffff0000) >> 16;
+    TVOCData = dat & 0x0000ffff;
 
     // 调试DHT11 温湿度传感器
-    DHT11_Read_Data(&temperature , &humidity);
-    OLED_ShowString(0, 3, (u8*)"TMP:");
-    OLED_ShowNum(36, 3, temperature, 5, 16);
-    OLED_ShowString(76, 3, (u8*)"cel");
+    if (DHT11_Read_Data(&temperature , &humidity) != 0)
+    {
+      // 读取失败处理，如果注释则为保留旧值
+      // temperature  = 0;
+      // humidity     = 0;
+    };
 
-    OLED_ShowString(0, 5, (u8*)"HUMI:");
-    OLED_ShowNum(40, 5, humidity, 5, 16);
-    OLED_ShowString(80, 5, (u8*)"ReH");
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */

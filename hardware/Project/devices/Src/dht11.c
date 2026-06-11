@@ -140,8 +140,7 @@ uint8_t DHT11_Read_Data(uint8_t* temp , uint8_t* humi)
         {
             *humi = buf[0]; // 湿度
             *temp = buf[2]; // 温度
-        }
-    }else return 1;
-
-    return 0 ;
+            return 0;
+        } return 1;
+    } return 1;
 }
