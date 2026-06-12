@@ -20,13 +20,13 @@ public class User {
     @JsonProperty("SoilHumidity")
     private Double soilHumidity;         // 土壤湿度(%)
     
-    @JsonProperty("Nitrogen")
+    @JsonProperty("N")
     private Double nitrogen;             // 氮含量(mg/L)
     
-    @JsonProperty("Phosphorus")
+    @JsonProperty("P")
     private Double phosphorus;           // 磷含量(mg/L)
     
-    @JsonProperty("Potassium")
+    @JsonProperty("K")
     private Double potassium;            // 钾含量(mg/L)
     
     @JsonProperty("LightIntensity")

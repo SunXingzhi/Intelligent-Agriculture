@@ -12,7 +12,7 @@ public interface EnvironmentMapper {
     
     // 插入数据
     @Insert("INSERT INTO tomato_data(CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
-            "Nitrogen, Phosphorus, Potassium, LightIntensity, ph, recordtime) " +
+            "N, P, K, LightIntensity, ph, recordtime) " +
             "VALUES(#{carbonConcentration}, #{temperature}, #{airHumidity}, #{soilHumidity}, " +
             "#{nitrogen}, #{phosphorus}, #{potassium}, #{lightIntensity}, #{ph}, #{recordTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -33,7 +33,7 @@ public interface EnvironmentMapper {
     // 更新数据
     @Update("UPDATE tomato_data SET CarbonConcentration=#{carbonConcentration}, " +
             "Temperature=#{temperature}, AirHumidity=#{airHumidity}, SoilHumidity=#{soilHumidity}, " +
-            "Nitrogen=#{nitrogen}, Phosphorus=#{phosphorus}, Potassium=#{potassium}, " +
+            "N=#{nitrogen}, P=#{phosphorus}, K=#{potassium}, " +
             "LightIntensity=#{lightIntensity}, ph=#{ph} WHERE id=#{id}")
     int update(User user);
     
@@ -50,9 +50,9 @@ public interface EnvironmentMapper {
             "AVG(Temperature) as avgTemperature, " +
             "AVG(AirHumidity) as avgAirHumidity, " +
             "AVG(SoilHumidity) as avgSoilHumidity, " +
-            "AVG(Nitrogen) as avgNitrogen, " +
-            "AVG(Phosphorus) as avgPhosphorus, " +
-            "AVG(Potassium) as avgPotassium, " +
+            "AVG(N) as avgNitrogen, " +
+            "AVG(P) as avgPhosphorus, " +
+            "AVG(K) as avgPotassium, " +
             "AVG(CarbonConcentration) as avgCarbonConcentration, " +
             "MAX(Temperature) as maxTemperature, " +
             "MIN(Temperature) as minTemperature " +
