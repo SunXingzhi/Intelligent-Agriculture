@@ -1,59 +1,3 @@
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import { getLatestData, getStatistics } from '@/api/environment'
-import SensorCard from '@/components/SensorCard.vue'
-import TrendChart from '@/components/TrendChart.vue'
-import { ElMessage } from 'element-plus'
-
-const latestData = ref(null)
-const statistics = ref(null)
-const loading = ref(true)
-let timer = null
-
-// 传感器指标配置
-const sensorMetrics = [
-  { key: 'temperature', label: '空气温度', unit: '°C', icon: '🌡️', min: 20, max: 30, color: '#f56c6c' },
-  { key: 'humidity', label: '空气湿度', unit: '%', icon: '💧', min: 60, max: 80, color: '#409eff' },
-  { key: 'co2', label: 'CO₂ 浓度', unit: 'ppm', icon: '🫁', min: 400, max: 1000, color: '#67c23a' },
-  { key: 'light', label: '光照强度', unit: 'lux', icon: '☀️', min: 20000, max: 40000, color: '#e6a23c' },
-  { key: 'soilMoisture', label: '土壤湿度', unit: '%', icon: '🌱', min: 60, max: 80, color: '#9b59b6' },
-  { key: 'ph', label: 'pH 值', unit: '', icon: '⚗️', min: 6.0, max: 7.5, color: '#1abc9c' }
-]
-
-function getStatus(value, min, max) {
-  if (value == null) return { text: '无数据', type: 'info' }
-  const v = Number(value)
-  if (v < min) return { text: '偏低', type: 'warning' }
-  if (v > max) return { text: '超标', type: 'danger' }
-  return { text: '正常', type: 'success' }
-}
-
-async function fetchData() {
-  try {
-    const [latestRes, statsRes] = await Promise.all([
-      getLatestData(),
-      getStatistics()
-    ])
-    latestData.value = latestRes.data || latestRes
-    statistics.value = statsRes.data || statsRes
-  } catch (e) {
-    console.error('获取数据失败', e)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchData()
-  // 每 30 秒自动刷新
-  timer = setInterval(fetchData, 30000)
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
-</script>
-
 <template>
   <div class="page-container">
     <div class="page-header">
@@ -96,11 +40,9 @@ onUnmounted(() => {
                 <el-descriptions-item label="湿度均值">
                   {{ statistics?.avgHumidity ?? '--' }} %
                 </el-descriptions-item>
-                <el-descriptions-item label="湿度范围">
-                  {{ statistics?.minHumidity ?? '--' }} ~ {{ statistics?.maxHumidity ?? '--' }} %
-                </el-descriptions-item>
+
                 <el-descriptions-item label="CO₂ 均值">
-                  {{ statistics?.avgCo2 ?? '--' }} ppm
+                  {{ statistics?.avgCarbonConcentration ?? '--' }} ppm
                 </el-descriptions-item>
                 <el-descriptions-item label="记录总数">
                   {{ statistics?.totalRecords ?? '--' }} 条
@@ -135,7 +77,64 @@ onUnmounted(() => {
     </el-skeleton>
   </div>
 </template>
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { getLatestData, getStatistics } from '@/api/environment'
+import SensorCard from '@/components/SensorCard.vue'
+import TrendChart from '@/components/TrendChart.vue'
+import { ElMessage } from 'element-plus'
 
+const latestData = ref(null)
+const statistics = ref(null)
+const loading = ref(true)
+let timer = null
+
+// 传感器指标配置
+const sensorMetrics = [
+  { key: 'Temperature', label: '空气温度', unit: '°C', icon: '🌡️', min: 20, max: 30, color: '#f56c6c' },
+  { key: 'Humidity', label: '空气湿度', unit: '%', icon: '💧', min: 60, max: 80, color: '#409eff' },
+  { key: 'CarbonConcentration', label: 'CO₂ 浓度', unit: 'ppm', icon: '🫁', min: 400, max: 1000, color: '#67c23a' },
+  { key: 'LightIntensity', label: '光照强度', unit: 'lux', icon: '☀️', min: 20000, max: 40000, color: '#e6a23c' },
+  { key: 'Nutrients', label: '土壤湿度', unit: '%', icon: '🌱', min: 60, max: 80, color: '#9b59b6' },
+  { key: 'PH', label: 'pH 值', unit: '', icon: '⚗️', min: 6.0, max: 7.5, color: '#1abc9c' },
+  { key: '土壤K含量', label: '土壤K含量', unit: 'mg/kg', icon: '🧪', min: 100, max: 200, color: '#34495e' },
+  {key: '土壤P含量', label: '土壤P含量', unit: 'mg/kg', icon: '🧪', min: 50, max: 150, color: '#e67e22' },
+  {key: '土壤N含量', label: '土壤N含量', unit: 'mg/kg', icon: '🧪', min: 100, max: 300, color: '#2ecc71' }
+]
+
+function getStatus(value, min, max) {
+  if (value == null) return { text: '无数据', type: 'info' }
+  const v = Number(value)
+  if (v < min) return { text: '偏低', type: 'warning' }
+  if (v > max) return { text: '超标', type: 'danger' }
+  return { text: '正常', type: 'success' }
+}
+
+async function fetchData() {
+  try {
+    const [latestRes, statsRes] = await Promise.all([
+      getLatestData(),
+      getStatistics()
+    ])
+    latestData.value = latestRes.data || latestRes
+    statistics.value = statsRes.data || statsRes
+  } catch (e) {
+    console.error('获取数据失败', e)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+  // 每 30 秒自动刷新
+  timer = setInterval(fetchData, 30000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+</script>
 <style scoped>
 .sensor-grid {
   margin-bottom: 0;

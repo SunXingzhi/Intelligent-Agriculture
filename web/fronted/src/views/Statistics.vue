@@ -1,3 +1,78 @@
+<template>
+  <div class="page-container">
+    <div class="page-header">
+      <h2>📈 统计分析</h2>
+      <p>环境数据的统计汇总与趋势可视化分析</p>
+    </div>
+
+    <el-skeleton :loading="loading" animated :rows="8">
+      <template #default>
+        <!-- 统计卡片 -->
+        <el-row :gutter="16" style="margin-bottom: 20px;">
+          <el-col :xs="12" :sm="6">
+            <div class="stat-card stat-highlight">
+              <div class="stat-label">温度均值</div>
+              <div class="stat-value" style="color: #f56c6c;">
+                {{ statistics?.avgTemperature ?? '--' }} °C
+              </div>
+            </div>
+          </el-col>
+          <el-col :xs="12" :sm="6">
+            <div class="stat-card stat-highlight">
+              <div class="stat-label">湿度均值</div>
+              <div class="stat-value" style="color: #409eff;">
+                {{ statistics?.avgHumidity ?? '--' }} %
+              </div>
+            </div>
+          </el-col>
+          <el-col :xs="12" :sm="6">
+            <div class="stat-card stat-highlight">
+              <div class="stat-label">CO₂ 均值</div>
+              <div class="stat-value" style="color: #67c23a;">
+                {{ statistics?.avgCo2 ?? '--' }} ppm
+              </div>
+            </div>
+          </el-col>
+          <el-col :xs="12" :sm="6">
+            <div class="stat-card stat-highlight">
+              <div class="stat-label">记录总数</div>
+              <div class="stat-value" style="color: #e6a23c;">
+                {{ statistics?.totalRecords ?? '--' }}
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+
+        <!-- 图表区域 -->
+        <el-row :gutter="16">
+          <el-col :xs="24" :md="12">
+            <div class="stat-card chart-card">
+              <div ref="tempChartRef" class="chart-container"></div>
+            </div>
+          </el-col>
+          <el-col :xs="24" :md="12">
+            <div class="stat-card chart-card">
+              <div ref="humidityChartRef" class="chart-container"></div>
+            </div>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="16" style="margin-top: 16px;">
+          <el-col :xs="24" :md="12">
+            <div class="stat-card chart-card">
+              <div ref="co2ChartRef" class="chart-container"></div>
+            </div>
+          </el-col>
+          <el-col :xs="24" :md="12">
+            <div class="stat-card chart-card">
+              <div ref="overviewChartRef" class="chart-container"></div>
+            </div>
+          </el-col>
+        </el-row>
+      </template>
+    </el-skeleton>
+  </div>
+</template>
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { getAllData, getStatistics } from '@/api/environment'
@@ -157,83 +232,6 @@ onMounted(async () => {
   setTimeout(initCharts, 100)
 })
 </script>
-
-<template>
-  <div class="page-container">
-    <div class="page-header">
-      <h2>📈 统计分析</h2>
-      <p>环境数据的统计汇总与趋势可视化分析</p>
-    </div>
-
-    <el-skeleton :loading="loading" animated :rows="8">
-      <template #default>
-        <!-- 统计卡片 -->
-        <el-row :gutter="16" style="margin-bottom: 20px;">
-          <el-col :xs="12" :sm="6">
-            <div class="stat-card stat-highlight">
-              <div class="stat-label">温度均值</div>
-              <div class="stat-value" style="color: #f56c6c;">
-                {{ statistics?.avgTemperature ?? '--' }} °C
-              </div>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="6">
-            <div class="stat-card stat-highlight">
-              <div class="stat-label">湿度均值</div>
-              <div class="stat-value" style="color: #409eff;">
-                {{ statistics?.avgHumidity ?? '--' }} %
-              </div>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="6">
-            <div class="stat-card stat-highlight">
-              <div class="stat-label">CO₂ 均值</div>
-              <div class="stat-value" style="color: #67c23a;">
-                {{ statistics?.avgCo2 ?? '--' }} ppm
-              </div>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="6">
-            <div class="stat-card stat-highlight">
-              <div class="stat-label">记录总数</div>
-              <div class="stat-value" style="color: #e6a23c;">
-                {{ statistics?.totalRecords ?? '--' }}
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <!-- 图表区域 -->
-        <el-row :gutter="16">
-          <el-col :xs="24" :md="12">
-            <div class="stat-card chart-card">
-              <div ref="tempChartRef" class="chart-container"></div>
-            </div>
-          </el-col>
-          <el-col :xs="24" :md="12">
-            <div class="stat-card chart-card">
-              <div ref="humidityChartRef" class="chart-container"></div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="16" style="margin-top: 16px;">
-          <el-col :xs="24" :md="12">
-            <div class="stat-card chart-card">
-              <div ref="co2ChartRef" class="chart-container"></div>
-            </div>
-          </el-col>
-          <el-col :xs="24" :md="12">
-            <div class="stat-card chart-card">
-              <div ref="overviewChartRef" class="chart-container"></div>
-            </div>
-          </el-col>
-        </el-row>
-      </template>
-    </el-skeleton>
-  </div>
-</template>
-
 <style scoped>
 .stat-highlight {
   text-align: center;
