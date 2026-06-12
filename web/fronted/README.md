@@ -14,7 +14,7 @@ web/fronted/src/
 │   ├── Dashboard.vue          # 📊 实时监控面板
 │   ├── SensorHistory.vue      # 📋 传感器历史数据
 │   ├── Statistics.vue         # 📈 统计分析 (ECharts 图表)
-│   └── AlertCenter.vue        # 🔔 告警中心
+│  
 ├── components/
 │   ├── SensorCard.vue         # 传感器数据卡片组件
 │   └── TrendChart.vue         # 趋势图组件

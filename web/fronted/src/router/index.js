@@ -24,11 +24,11 @@ const routes = [
     meta: { title: '统计分析' }
   },
   {
-    path: '/alerts',
-    name: 'AlertCenter',
-    component: () => import('@/views/AlertCenter.vue'),
-    meta: { title: '告警中心' }
-  }
+    path: '/detection',
+    name: 'Detection',
+    component: () => import('@/views/Detection.vue'),
+    meta: { title: '番茄长势检测' }
+  },
 ]
 
 const router = createRouter({
