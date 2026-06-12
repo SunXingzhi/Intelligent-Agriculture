@@ -42,51 +42,86 @@ public class EnvironmentService {
          * 添加环境数据
          */
         public User addData(User user) {
+                // 设置记录时间
                 if (user.getRecordTime() == null) {
                         user.setRecordTime(LocalDateTime.now());
                 }
+
+                // 数据验证和清洗
+                validateAndCleanData(user);
+
+                // 保存到数据库
+                environmentMapper.insert(user);
+
+                return user;
+        }
+
+        /**
+         * 验证并清洗数据
+         */
+        private void validateAndCleanData(User user) {
+                // 验证二氧化碳浓度
                 if (user.getCarbonConcentration() != null) {
                         if (user.getCarbonConcentration() < 0 || user.getCarbonConcentration() > 10000) {
-                                user.setCarbonConcentration(null); // 设为null
+                                user.setCarbonConcentration(null);
                         }
                 }
+
                 // 验证温度
                 if (user.getTemperature() != null) {
                         if (user.getTemperature() < -50 || user.getTemperature() > 100) {
-                                user.setTemperature(null); // 设为null
+                                user.setTemperature(null);
                         }
                 }
 
-                // 验证湿度
-                if (user.getHumidity() != null) {
-                        if (user.getHumidity() < 0 || user.getHumidity() > 100) {
-                                user.setHumidity(null); // 设为null
+                // 验证空气湿度
+                if (user.getAirHumidity() != null) {
+                        if (user.getAirHumidity() < 0 || user.getAirHumidity() > 100) {
+                                user.setAirHumidity(null);
                         }
                 }
 
-                // 验证养分浓度
-                if (user.getNutrients() != null) {
-                        if (user.getNutrients() < 0 || user.getNutrients() > 1000) {
-                                user.setNutrients(null); // 设为null
+                // 验证土壤湿度
+                if (user.getSoilHumidity() != null) {
+                        if (user.getSoilHumidity() < 0 || user.getSoilHumidity() > 100) {
+                                user.setSoilHumidity(null);
+                        }
+                }
+
+                // 验证氮含量
+                if (user.getNitrogen() != null) {
+                        if (user.getNitrogen() < 0 || user.getNitrogen() > 1000) {
+                                user.setNitrogen(null);
+                        }
+                }
+
+                // 验证磷含量
+                if (user.getPhosphorus() != null) {
+                        if (user.getPhosphorus() < 0 || user.getPhosphorus() > 1000) {
+                                user.setPhosphorus(null);
+                        }
+                }
+
+                // 验证钾含量
+                if (user.getPotassium() != null) {
+                        if (user.getPotassium() < 0 || user.getPotassium() > 1000) {
+                                user.setPotassium(null);
                         }
                 }
 
                 // 验证光强
                 if (user.getLightIntensity() != null) {
                         if (user.getLightIntensity() < 0 || user.getLightIntensity() > 100000) {
-                                user.setLightIntensity(null); // 设为null
+                                user.setLightIntensity(null);
                         }
                 }
 
                 // 验证pH值
                 if (user.getPh() != null) {
                         if (user.getPh() < 0 || user.getPh() > 14) {
-                                user.setPh(null); // 设为null
+                                user.setPh(null);
                         }
                 }
-                environmentMapper.insert(user);
-
-                return user;
         }
 
         /**
