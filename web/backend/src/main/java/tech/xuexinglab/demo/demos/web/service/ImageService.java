@@ -44,7 +44,7 @@ public class ImageService {
         // 3. 解码Base64图片数据
         byte[] imageBytes = decodeBase64Image(imageMessage.getImageData());
         
-        // 4. 保存图片到文件系统（可选）
+        // 4. 保存图片到文件系统
         String imagePath = saveImageToFile(imageBytes, imageMessage.getType());
         log.info("图片已保存到: {}", imagePath);
         
@@ -77,7 +77,7 @@ public class ImageService {
     private String saveImageToFile(byte[] imageBytes, String imageType) {
         try {
             // 创建保存目录
-            String uploadDir = "uploads/images/";
+             String uploadDir = "C:\\Users\\19253\\Desktop\\tomato\\Intelligent-Agriculture\\tomato_picture\\";
             java.io.File dir = new java.io.File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
