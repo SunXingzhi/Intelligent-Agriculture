@@ -15,7 +15,7 @@ void SGP30_ad_write(uint8_t a, uint8_t b)
 	data[0] = a;
 	data[1] = b;
 
-	HAL_I2C_Master_Transmit(&hi2c2, SGP30_ADDR << 1, data, 2, HAL_MAX_DELAY);
+	HAL_I2C_Master_Transmit(&hi2c2, SGP30_ADDR, data, 2, HAL_MAX_DELAY);
 	HAL_Delay(100);
 }
 
@@ -25,7 +25,7 @@ uint32_t SGP30_ad_read(void)
 	uint32_t dat;
 	uint8_t buf[5];
 
-	HAL_I2C_Master_Receive(&hi2c2, SGP30_ADDR << 1, buf, 5, HAL_MAX_DELAY);
+	HAL_I2C_Master_Receive(&hi2c2, SGP30_ADDR, buf, 5, HAL_MAX_DELAY);
 
 	// 前两个字节是数据，第三个是CRC，后两个是数据
 	dat = (uint32_t)buf[0] << 24;
