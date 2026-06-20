@@ -5,7 +5,7 @@
 #include "i2c.h"
 
 /* BH1750设备地址 */
-#define BH1750_ADDR 0x46
+#define BH1750_ADDR 0x23        // ADDR引脚接GND
 
 /* BH1750指令定义 */
 #define BH1750_POWER_ON     0x01

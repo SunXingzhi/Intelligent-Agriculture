@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -30,6 +31,8 @@
 #include "i2c.h"
 #include "sgp30.h"
 #include "dht11.h"
+#include "soil_moisture.h"
+#include "npk_sensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,7 +101,11 @@ int main(void)
   MX_I2C2_Init();
   MX_TIM3_Init();
   MX_USART1_UART_Init();
+  MX_ADC1_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  // adc callibration
+  if (HAL_ADCEx_Calibration_Start(&hadc1)!=HAL_OK) Error_Handler();
   OLED_Init();
   OLED_Clear();
 
@@ -139,6 +146,77 @@ int main(void)
       // humidity     = 0;
     };
 
+    // 土壤湿度读取
+    uint8_t soil_moisture = Moisture_GetPercentage();
+    uint16_t soil_raw_adc = Moisture_GetRawADC();
+
+    // NPK传感器读取
+    int16_t npk_N, npk_P, npk_K;
+    NPK_StatusTypeDef npk_ret = NPK_ReadNPK(&npk_N, &npk_P, &npk_K);
+    if (npk_ret == NPK_OK) {
+      // 读取成功，npk_N/npk_P/npk_K 即为氮磷钾值
+    } else {
+      npk_K = 0;
+      npk_N = 0;
+      npk_P = 0;
+      // 错误处理
+      switch (npk_ret) {
+      case NPK_ERR_TIMEOUT: /* 超时 */ break;
+      case NPK_ERR_CRC:     /* CRC错误 */ break;
+      case NPK_ERR_FRAME:   /* 帧错误 */ break;
+      case NPK_ERR_ADDR:    /* 地址错误 */ break;
+      case NPK_ERR_FUNC:    /* 功能码错误 */ break;
+      default: break;
+      }
+    }
+
+    // ====== 帧头 + 长度 ======
+    aTXbuf[0] = 0xAA;
+    aTXbuf[1] = 0x55;
+    aTXbuf[2] = 0x11;  // 17字节数据
+
+    // ====== 光照 (4字节, 小端序) ======
+    aTXbuf[3]  = (uint8_t)(LightData_Hex & 0xFF);
+    aTXbuf[4]  = (uint8_t)((LightData_Hex >> 8) & 0xFF);
+    aTXbuf[5]  = (uint8_t)((LightData_Hex >> 16) & 0xFF);
+    aTXbuf[6]  = (uint8_t)((LightData_Hex >> 24) & 0xFF);
+
+    // ====== CO2 (2字节) ======
+    aTXbuf[7]  = (uint8_t)(co2Data & 0xFF);
+    aTXbuf[8]  = (uint8_t)((co2Data >> 8) & 0xFF);
+
+    // ====== TVOC (2字节) ======
+    aTXbuf[9]  = (uint8_t)(TVOCData & 0xFF);
+    aTXbuf[10] = (uint8_t)((TVOCData >> 8) & 0xFF);
+
+    // ====== 温度、湿度 ======
+    aTXbuf[11] = temperature;
+    aTXbuf[12] = humidity;
+
+    // ====== 土壤湿度 (1字节) ======
+    aTXbuf[13] = (uint8_t)(soil_moisture & 0xFF);
+
+    // ====== N (2字节, int16_t 有符号) ======
+    aTXbuf[14] = (uint8_t)(npk_N & 0xFF);
+    aTXbuf[15] = (uint8_t)((npk_N >> 8) & 0xFF);
+
+    // ====== P (2字节) ======
+    aTXbuf[16] = (uint8_t)(npk_P & 0xFF);
+    aTXbuf[17] = (uint8_t)((npk_P >> 8) & 0xFF);
+
+    // ====== K (2字节) ======
+    aTXbuf[18] = (uint8_t)(npk_K & 0xFF);
+    aTXbuf[19] = (uint8_t)((npk_K >> 8) & 0xFF);
+
+    // ====== 校验和 (帧头 + 长度 + 数据 累加和的低8位) ======
+    uint8_t sum = 0;
+    for (int i = 0; i < 20; i++) {
+      sum += aTXbuf[i];
+    }
+    aTXbuf[20] = sum;
+
+    // ====== 发送 ======
+    HAL_UART_Transmit(&huart1, aTXbuf, 21, HAL_MAX_DELAY);
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */
@@ -152,6 +230,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
@@ -178,6 +257,12 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
