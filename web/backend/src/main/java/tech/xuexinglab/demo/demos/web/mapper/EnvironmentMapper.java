@@ -10,7 +10,6 @@ import java.util.Map;
 @Mapper
 public interface EnvironmentMapper {
     
-    // 插入数据
     @Insert("INSERT INTO tomato_data(CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
             "N, P, K, LightIntensity, ph, recordtime) " +
             "VALUES(#{carbonConcentration}, #{temperature}, #{airHumidity}, #{soilHumidity}, " +
@@ -18,34 +17,40 @@ public interface EnvironmentMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(User user);
     
-    // 查询所有数据
-    @Select("SELECT * FROM tomato_data ORDER BY recordtime DESC")
+    // 查询所有数据 – 显式别名
+    @Select("SELECT id, CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
+            "N AS nitrogen, P AS phosphorus, K AS potassium, " +
+            "LightIntensity, ph, recordtime FROM tomato_data ORDER BY recordtime DESC")
     List<User> findAll();
     
-    // 根据ID查询
-    @Select("SELECT * FROM tomato_data WHERE id = #{id}")
+    // 根据ID查询 – 显式别名
+    @Select("SELECT id, CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
+            "N AS nitrogen, P AS phosphorus, K AS potassium, " +
+            "LightIntensity, ph, recordtime FROM tomato_data WHERE id = #{id}")
     User findById(Long id);
     
-    // 查询最新数据
-    @Select("SELECT * FROM tomato_data ORDER BY recordtime DESC LIMIT 1")
+    // 查询最新数据 – 显式别名
+    @Select("SELECT id, CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
+            "N AS nitrogen, P AS phosphorus, K AS potassium, " +
+            "LightIntensity, ph, recordtime FROM tomato_data ORDER BY recordtime DESC LIMIT 1")
     User findLatest();
     
-    // 更新数据
     @Update("UPDATE tomato_data SET CarbonConcentration=#{carbonConcentration}, " +
             "Temperature=#{temperature}, AirHumidity=#{airHumidity}, SoilHumidity=#{soilHumidity}, " +
             "N=#{nitrogen}, P=#{phosphorus}, K=#{potassium}, " +
             "LightIntensity=#{lightIntensity}, ph=#{ph} WHERE id=#{id}")
     int update(User user);
     
-    // 删除数据
     @Delete("DELETE FROM tomato_data WHERE id = #{id}")
     int deleteById(Long id);
     
-    // 按温度范围查询
-    @Select("SELECT * FROM tomato_data WHERE Temperature BETWEEN #{min} AND #{max} ORDER BY recordtime DESC")
+    // 按温度范围查询 – 显式别名
+    @Select("SELECT id, CarbonConcentration, Temperature, AirHumidity, SoilHumidity, " +
+            "N AS nitrogen, P AS phosphorus, K AS potassium, " +
+            "LightIntensity, ph, recordtime FROM tomato_data WHERE Temperature BETWEEN #{min} AND #{max} ORDER BY recordtime DESC")
     List<User> findByTemperatureRange(@Param("min") double min, @Param("max") double max);
     
-    // 获取统计数据
+   
     @Select("SELECT COUNT(*) as totalRecords, " +
             "AVG(Temperature) as avgTemperature, " +
             "AVG(AirHumidity) as avgAirHumidity, " +
