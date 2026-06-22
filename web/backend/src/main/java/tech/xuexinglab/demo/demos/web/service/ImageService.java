@@ -12,6 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -66,8 +69,7 @@ public class ImageService {
     /**
      * 处理图片字节流（新增功能）
      */
-    public Map<String, Object> processImageStream(byte[] imageData, String imageType, 
-                                                  String deviceId, String timestamp) {
+    public Map<String, Object> processImageStream(byte[] imageData, String imageType, String deviceId, String timestamp) {
         
         // 1. 验证图片数据
         validateImageData(imageData);
@@ -116,17 +118,14 @@ public class ImageService {
             throw new RuntimeException("图片数据不能为空");
         }
         
-        // 检查最小大小（至少1KB）
         if (imageData.length < 1024) {
             log.warn("图片数据过小: {} bytes", imageData.length);
         }
         
-        // 检查最大大小（限制10MB）
         if (imageData.length > 10 * 1024 * 1024) {
             throw new RuntimeException("图片数据过大，超过10MB限制");
         }
         
-        // 检查JPEG文件头
         if (imageData.length > 2 && imageData[0] == (byte) 0xFF && imageData[1] == (byte) 0xD8) {
             log.debug("图片格式: JPEG");
         } else if (imageData.length > 8 && 
@@ -142,7 +141,6 @@ public class ImageService {
      */
     private byte[] decodeBase64Image(String base64Image) {
         try {
-            // 移除可能的Base64前缀
             String base64Data = base64Image;
             if (base64Image.contains(",")) {
                 base64Data = base64Image.split(",")[1];
@@ -159,18 +157,18 @@ public class ImageService {
      */
     private String saveImageToFile(byte[] imageBytes, String imageType) {
         try {
-            // 创建保存目录
+            // 使用Optional处理null值
+            String safeImageType = Optional.ofNullable(imageType).orElse("unknown");
+            
             java.io.File dir = new java.io.File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
             
-            // 生成文件名
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
-            String fileName = imageType + "_" + timestamp + ".jpg";
+            String fileName = safeImageType + "_" + timestamp + ".jpg";
             String filePath = uploadDir + fileName;
             
-            // 保存文件
             try (FileOutputStream fos = new FileOutputStream(filePath)) {
                 fos.write(imageBytes);
             }
@@ -184,22 +182,28 @@ public class ImageService {
     }
     
     /**
-     * 通过WebSocket广播图片（Base64版本）
+     * 通过WebSocket广播图片（Base64版本）- 使用Optional彻底修复
      */
     private void broadcastImage(String base64Image, String type, String timestamp, String deviceId) {
         try {
+            // 使用Optional彻底处理null值
+            String safeType = Optional.ofNullable(type).orElse("unknown");
+            String safeTimestamp = Optional.ofNullable(timestamp).orElseGet(
+                () -> LocalDateTime.now().toString());
+            String safeDeviceId = Optional.ofNullable(deviceId).orElse("");
+            
             // 构造JSON消息
             String json = String.format(
                 "{\"type\":\"%s\",\"imageData\":\"%s\",\"timestamp\":\"%s\",\"deviceId\":\"%s\"}",
-                type,
+                safeType,
                 base64Image,
-                timestamp,
-                deviceId != null ? deviceId : ""
+                safeTimestamp,
+                safeDeviceId
             );
             
-            // 推送到所有连接的前端
-            webSocketHandler.broadcast(json);
-            log.info("图片已推送到前端: type={}", type);
+            // 推送到所有连接的前端，使用 Objects.requireNonNull 确保非空，消除 null safety 警告
+            webSocketHandler.broadcast(Objects.requireNonNull(json, "json must not be null"));
+            log.info("图片已推送到前端: type={}", safeType);
             
         } catch (Exception e) {
             log.error("WebSocket推送失败", e);
@@ -207,28 +211,34 @@ public class ImageService {
     }
     
     /**
-     * 通过WebSocket广播图片字节流（新增）
+     * 通过WebSocket广播图片字节流（新增）- 使用Optional彻底修复
      */
     private void broadcastImageStream(byte[] imageData, String imageType, 
                                      String deviceId, String timestamp) {
         try {
-            // 将字节流转换为Base64（用于WebSocket传输）
+            // 使用Optional彻底处理null值
+            String safeImageType = Optional.ofNullable(imageType).orElse("unknown");
+            String safeDeviceId = Optional.ofNullable(deviceId).orElse("unknown");
+            String safeTimestamp = Optional.ofNullable(timestamp).orElseGet(
+                () -> LocalDateTime.now().toString());
+            
+            // 将字节流转换为Base64
             String base64Image = Base64.getEncoder().encodeToString(imageData);
             
             // 构造JSON消息
             String json = String.format(
                 "{\"type\":\"%s\",\"imageData\":\"%s\",\"timestamp\":\"%s\"," +
                 "\"deviceId\":\"%s\",\"imageSize\":%d}",
-                imageType,
+                safeImageType,
                 base64Image,
-                timestamp,
-                deviceId,
+                safeTimestamp,
+                safeDeviceId,
                 imageData.length
             );
             
-            // 推送到前端
-            webSocketHandler.broadcast(json);
-            log.debug("图片已推送到前端: 类型={}, 大小={}bytes", imageType, imageData.length);
+            // 推送到前端，使用 Objects.requireNonNull 确保非空，消除 null safety 警告
+            webSocketHandler.broadcast(Objects.requireNonNull(json, "json must not be null"));
+            log.debug("图片已推送到前端: 类型={}, 大小={}bytes", safeImageType, imageData.length);
             
         } catch (Exception e) {
             log.error("WebSocket推送失败", e);
