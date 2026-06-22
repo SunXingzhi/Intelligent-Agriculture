@@ -89,7 +89,7 @@ onMounted(() => {
 
           <el-col :xs="24" :md="8">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">📊 检测统计</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 检测统计</h3>
               <el-descriptions :column="1" border size="small">
                 <el-descriptions-item label="设备编号">
                   {{ latestDetection?.deviceCode || '--' }}

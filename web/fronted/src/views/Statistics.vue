@@ -21,7 +21,7 @@
             <div class="stat-card stat-highlight">
               <div class="stat-label">湿度均值</div>
               <div class="stat-value" style="color: #409eff;">
-                {{ statistics?.avgHumidity ?? '--' }} %
+                {{ statistics?.avgAirHumidity ?? '--' }} %
               </div>
             </div>
           </el-col>
@@ -29,7 +29,7 @@
             <div class="stat-card stat-highlight">
               <div class="stat-label">CO₂ 均值</div>
               <div class="stat-value" style="color: #67c23a;">
-                {{ statistics?.avgCo2 ?? '--' }} ppm
+                {{ statistics?.avgCarbonConcentration ?? '--' }} ppm
               </div>
             </div>
           </el-col>
