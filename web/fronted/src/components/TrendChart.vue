@@ -12,14 +12,14 @@ async function initChart() {
     if (!dataList.length || !chartRef.value) return
 
     const sorted = [...dataList].sort((a, b) =>
-      new Date(a.recordedAt || a.createdAt) - new Date(b.recordedAt || b.createdAt)
+      new Date(a.recordTime) - new Date(b.recordTime)
     )
 
     // 只取最近 20 条
     const recent = sorted.slice(-20)
 
     const timeLabels = recent.map(d => {
-      const t = d.recordedAt || d.createdAt || ''
+      const t = d.recordTime || ''
       return t.length > 16 ? t.substring(11, 16) : t
     })
 
@@ -63,7 +63,7 @@ async function initChart() {
         {
           name: '温度(°C)',
           type: 'line',
-          data: recent.map(d => d.temperature),
+          data: recent.map(d => d.Temperature),
           smooth: true,
           lineStyle: { color: '#f56c6c', width: 2 },
           itemStyle: { color: '#f56c6c' }
@@ -71,7 +71,7 @@ async function initChart() {
         {
           name: '湿度(%)',
           type: 'line',
-          data: recent.map(d => d.humidity),
+          data: recent.map(d => d.AirHumidity),
           smooth: true,
           lineStyle: { color: '#409eff', width: 2 },
           itemStyle: { color: '#409eff' }
@@ -80,7 +80,7 @@ async function initChart() {
           name: 'CO₂(ppm/10)',
           type: 'bar',
           yAxisIndex: 1,
-          data: recent.map(d => d.co2 ? (d.co2 / 10).toFixed(1) : 0),
+          data: recent.map(d => d.CarbonConcentration ? (d.CarbonConcentration / 10).toFixed(1) : 0),
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: 'rgba(103, 194, 58, 0.6)' },

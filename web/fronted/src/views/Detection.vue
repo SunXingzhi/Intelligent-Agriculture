@@ -1,51 +1,7 @@
-<script setup>
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-
-const loading = ref(false)
-const latestDetection = ref(null)
-const detectionHistory = ref([])
-
-// 模拟数据 - 实际项目中替换为 API 调用
-const mockDetection = {
-  id: 1,
-  deviceCode: 'TOMATO-001',
-  greenCount: 15,
-  breakerCount: 8,
-  redCount: 3,
-  totalCount: 26,
-  confidenceAvg: 0.8723,
-  imageUrl: '',
-  recordedAt: '2026-06-10 14:30:30'
-}
-
-async function fetchLatestDetection() {
-  loading.value = true
-  try {
-    // TODO: 替换为实际 API 调用
-    // const res = await getLatestDetection()
-    // latestDetection.value = res.data
-
-    // 模拟数据
-    await new Promise(resolve => setTimeout(resolve, 500))
-    latestDetection.value = mockDetection
-  } catch (e) {
-    console.error('获取检测数据失败', e)
-    ElMessage.error('获取检测数据失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchLatestDetection()
-})
-</script>
-
 <template>
   <div class="page-container">
     <div class="page-header">
-      <h2>🍅 番茄长势检测</h2>
+      <h2> 番茄长势检测</h2>
       <p>基于 YOLOv8 的番茄成熟度实时检测与分析</p>
     </div>
 
@@ -55,13 +11,13 @@ onMounted(() => {
         <el-row :gutter="16">
           <el-col :xs="24" :md="16">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">📸 最新检测画面</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;">最新检测画面</h3>
               <div class="detection-cameras-row">
                 <div class="camera-block">
                   <h4 style="margin-bottom: 12px; font-size: 14px; color: #606266;">俯视摄像头</h4>
                   <div class="detection-overlooking-image-container">
-                    <div v-if="latestDetection?.imageUrl" class="detection-image">
-                      <img :src="latestDetection.imageUrl" alt="俯视检测画面" />
+                    <div v-if="topImage" class="detection-image">
+                      <img :src="'data:image/png;base64,' + topImage" alt="俯视检测画面" />
                     </div>
                     <div v-else class="detection-placeholder">
                       <el-icon :size="48" color="#c0c4cc"><Monitor /></el-icon>
@@ -73,8 +29,8 @@ onMounted(() => {
                 <div class="camera-block">
                   <h4 style="margin-bottom: 12px; font-size: 14px; color: #606266;">平视摄像头</h4>
                   <div class="detection-sidelooking-image-container">
-                    <div v-if="latestDetection?.imageUrl" class="detection-image">
-                      <img :src="latestDetection.imageUrl" alt="平视检测画面" />
+                    <div v-if="frontImage" class="detection-image">
+                      <img :src="'data:image/png;base64,' + frontImage" alt="平视检测画面" />
                     </div>
                     <div v-else class="detection-placeholder">
                       <el-icon :size="48" color="#c0c4cc"><Monitor /></el-icon>
@@ -108,7 +64,7 @@ onMounted(() => {
             </div>
 
             <div class="stat-card" style="margin-top: 16px;">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">🍅 成熟度分布</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 成熟度分布</h3>
               <div class="maturity-grid">
                 <div class="maturity-item green">
                   <span class="maturity-label">青果</span>
@@ -146,6 +102,83 @@ onMounted(() => {
     </el-skeleton>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import { useWebSocket } from '../tools/websocket'
+import { useImageStream } from '@/tools/useImageStream'
+
+
+const { messages } = useWebSocket('ws://localhost:8000/ws/detection/')
+
+const { topImage, frontImage } = useImageStream()
+
+const loading = ref(false)
+const latestDetection = ref(null)
+const detectionHistory = ref([])
+
+
+
+// 模拟设备数据
+const mockDetection = {
+  id: 1,
+  deviceCode: 'TOMATO-001',
+  greenCount: 15,
+  breakerCount: 8,
+  redCount: 3,
+  totalCount: 26,
+  confidenceAvg: 0.8723,
+  imageUrl: '',
+  recordedAt: '2026-06-10 14:30:30'
+}
+
+async function fetchLatestDetection() {
+  loading.value = true
+  try {
+    // TODO: 替换为实际 API 调用
+    // const res = await getLatestDetection()
+    // latestDetection.value = res.data
+
+    // 模拟数据
+    await new Promise(resolve => setTimeout(resolve, 500))
+    latestDetection.value = mockDetection
+  } catch (e) {
+    console.error('获取检测数据失败', e)
+    ElMessage.error('获取检测数据失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  // fetchLatestDetection()
+  
+})
+
+// 监听是否有新的检测数据通过 WebSocket 推送过来
+watch(messages, (newMessages) => {
+  if (newMessages.length > 0) {
+    const latestMsg = newMessages[newMessages.length - 1]
+    try {
+      const detectionData = JSON.parse(latestMsg)
+      if(detectionData.type=='top-image'){
+        topImage.value = detectionData.imageData
+        // 解析图片base64数据（jpg格式数据）
+        
+      } else if(detectionData.type=='front-image'){
+        frontImage.value = detectionData.imageData
+      }
+      latestDetection.value = detectionData
+      detectionHistory.value.unshift(detectionData) // 新数据添加到历史记录顶部
+    } catch (e) {
+      console.error('解析检测数据失败', e)
+    }
+  }
+})
+
+</script>
+
 
 <style scoped>
 /* 关键：父元素 flex 让两个子容器并排 */

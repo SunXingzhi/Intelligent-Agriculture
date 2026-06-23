@@ -29,7 +29,7 @@
         <el-row :gutter="16" style="margin-top: 20px;">
           <el-col :xs="24" :md="12">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">📈 数据统计概览</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 数据统计概览</h3>
               <el-descriptions :column="2" border size="small">
                 <el-descriptions-item label="温度均值">
                   {{ statistics?.avgTemperature ?? '--' }} °C
@@ -53,7 +53,7 @@
 
           <el-col :xs="24" :md="12">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">🕐 最新采集信息</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 最新采集信息</h3>
               <el-descriptions :column="1" border size="small">
                 <el-descriptions-item label="数据ID">
                   {{ latestData?.id ?? '--' }}

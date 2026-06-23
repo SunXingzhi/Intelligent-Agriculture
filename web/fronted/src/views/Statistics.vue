@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="page-header">
-      <h2>📈 统计分析</h2>
+      <h2> 统计分析</h2>
       <p>环境数据的统计汇总与趋势可视化分析</p>
     </div>
 
