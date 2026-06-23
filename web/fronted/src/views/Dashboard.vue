@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="page-header">
-      <h2>📊 实时监控面板</h2>
+      <h2>实时监控面板</h2>
       <p>实时展示番茄种植环境的传感器数据与系统状态</p>
     </div>
 
@@ -29,7 +29,7 @@
         <el-row :gutter="16" style="margin-top: 20px;">
           <el-col :xs="24" :md="12">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">📈 数据统计概览</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 数据统计概览</h3>
               <el-descriptions :column="2" border size="small">
                 <el-descriptions-item label="温度均值">
                   {{ statistics?.avgTemperature ?? '--' }} °C
@@ -38,7 +38,7 @@
                   {{ statistics?.minTemperature ?? '--' }} ~ {{ statistics?.maxTemperature ?? '--' }} °C
                 </el-descriptions-item>
                 <el-descriptions-item label="湿度均值">
-                  {{ statistics?.avgHumidity ?? '--' }} %
+                  {{ statistics?.avgAirHumidity ?? '--' }} %
                 </el-descriptions-item>
 
                 <el-descriptions-item label="CO₂ 均值">
@@ -53,13 +53,13 @@
 
           <el-col :xs="24" :md="12">
             <div class="stat-card">
-              <h3 style="margin-bottom: 16px; font-size: 16px;">🕐 最新采集信息</h3>
+              <h3 style="margin-bottom: 16px; font-size: 16px;"> 最新采集信息</h3>
               <el-descriptions :column="1" border size="small">
                 <el-descriptions-item label="数据ID">
                   {{ latestData?.id ?? '--' }}
                 </el-descriptions-item>
                 <el-descriptions-item label="采集时间">
-                  {{ latestData?.recordedAt || latestData?.createdAt || '--' }}
+                  {{ latestData?.recordTime || '--' }}
                 </el-descriptions-item>
                 <el-descriptions-item label="数据状态">
                   <el-tag type="success" size="small">有效</el-tag>
@@ -91,15 +91,15 @@ let timer = null
 
 // 传感器指标配置
 const sensorMetrics = [
-  { key: 'Temperature', label: '空气温度', unit: '°C', icon: '🌡️', min: 20, max: 30, color: '#f56c6c' },
-  { key: 'Humidity', label: '空气湿度', unit: '%', icon: '💧', min: 60, max: 80, color: '#409eff' },
-  { key: 'CarbonConcentration', label: 'CO₂ 浓度', unit: 'ppm', icon: '🫁', min: 400, max: 1000, color: '#67c23a' },
-  { key: 'LightIntensity', label: '光照强度', unit: 'lux', icon: '☀️', min: 20000, max: 40000, color: '#e6a23c' },
-  { key: 'Nutrients', label: '土壤湿度', unit: '%', icon: '🌱', min: 60, max: 80, color: '#9b59b6' },
-  { key: 'PH', label: 'pH 值', unit: '', icon: '⚗️', min: 6.0, max: 7.5, color: '#1abc9c' },
-  { key: '土壤K含量', label: '土壤K含量', unit: 'mg/kg', icon: '🧪', min: 100, max: 200, color: '#34495e' },
-  {key: '土壤P含量', label: '土壤P含量', unit: 'mg/kg', icon: '🧪', min: 50, max: 150, color: '#e67e22' },
-  {key: '土壤N含量', label: '土壤N含量', unit: 'mg/kg', icon: '🧪', min: 100, max: 300, color: '#2ecc71' }
+  { key: 'Temperature', label: '空气温度', unit: '°C', icon: 'iconfont icon-wendu', min: 20, max: 30, color: '#f56c6c' },
+  { key: 'AirHumidity', label: '空气湿度', unit: '%', icon: 'iconfont icon-HumidityColorOff', min: 60, max: 80, color: '#409eff' },
+  { key: 'CarbonConcentration', label: 'CO₂ 浓度', unit: 'ppm', icon: 'iconfont icon-eryanghuatan', min: 400, max: 1000, color: '#67c23a' },
+  { key: 'LightIntensity', label: '光照强度', unit: 'lux', icon: 'iconfont icon-guangzhaoqiangdu', min: 20000, max: 40000, color: '#e6a23c' },
+  { key: 'SoilHumidity', label: '土壤湿度', unit: '%', icon: 'iconfont icon-turangshidu', min: 60, max: 80, color: '#9b59b6' },
+  { key: 'PH', label: 'pH 值', unit: '', icon: 'iconfont icon-PHzhi', min: 6.0, max: 7.5, color: '#1abc9c' },
+  { key: 'K', label: '土壤K含量', unit: 'mg/kg', icon: 'iconfont icon-turangjiahanliang', min: 100, max: 200, color: '#34495e' },
+  { key: 'P', label: '土壤P含量', unit: 'mg/kg', icon: 'iconfont icon-turanglinhanliang', min: 50, max: 150, color: '#e67e22' },
+  { key: 'N', label: '土壤N含量', unit: 'mg/kg', icon: 'iconfont icon-turangdanhanliang', min: 100, max: 300, color: '#2ecc71' }
 ]
 
 function getStatus(value, min, max) {

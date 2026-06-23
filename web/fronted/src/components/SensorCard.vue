@@ -3,7 +3,7 @@ defineProps({
   label: { type: String, required: true },
   value: { type: [Number, String], default: null },
   unit: { type: String, default: '' },
-  icon: { type: String, default: '📊' },
+  icon: { type: String, default: 'iconfont icon-charts' },
   status: { type: Object, default: () => ({ text: '无数据', type: 'info' }) },
   color: { type: String, default: '#409eff' }
 })
@@ -12,7 +12,9 @@ defineProps({
 <template>
   <div class="sensor-card stat-card">
     <div class="sensor-header">
-      <span class="sensor-icon">{{ icon }}</span>
+      <span class="sensor-icon">
+        <i :class="icon"></i>
+      </span>
       <el-tag :type="status.type" size="small" effect="plain">
         {{ status.text }}
       </el-tag>
@@ -52,7 +54,11 @@ defineProps({
 }
 
 .sensor-icon {
-  font-size: 24px;
+  font-size: 32px;
+}
+
+.sensor-icon .iconfont {
+  font-size: inherit;
 }
 
 .sensor-value {
