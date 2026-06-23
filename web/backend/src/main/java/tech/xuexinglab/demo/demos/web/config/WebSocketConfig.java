@@ -12,15 +12,15 @@ import tech.xuexinglab.demo.demos.web.websocket.SensorWebSocketHandler;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Bean
-    @NonNull
-    public SensorWebSocketHandler sensorWebSocketHandler() {
-        return new SensorWebSocketHandler();
-    }
-    
-    @Override
-    public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
-        registry.addHandler(sensorWebSocketHandler(), "/ws/sensor")
-                .setAllowedOrigins("*");  // 允许跨域连接
-    }
+	@Bean
+	@NonNull
+	public SensorWebSocketHandler sensorWebSocketHandler() {
+		return new SensorWebSocketHandler();
+	}
+
+	@Override
+	public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
+		registry.addHandler(sensorWebSocketHandler(), "/ws/sensor")
+				.setAllowedOrigins("*"); // 允许跨域连接
+	}
 }
