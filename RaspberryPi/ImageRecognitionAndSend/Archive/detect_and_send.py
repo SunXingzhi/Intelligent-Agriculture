@@ -18,11 +18,12 @@ import os
 import sys
 
 # ================== 全局配置 ==================
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # 脚本所在目录
 REAL_BLUE_SIDE_LENGTH = 0.2          # 蓝色正方形真实边长（米）
-INPUT_IMAGE_NAME = "image.jpg"       # 待处理的俯视图输入文件
+INPUT_IMAGE_NAME = os.path.join(SCRIPT_DIR, "image.jpg")  # 待处理的俯视图输入文件
 SAVE_RESULT = False                   # 是否将结果图存入磁盘（调试用）
-RESULT_IMAGE_NAME = "top.jpg"        # 结果图文件名（仅当 SAVE_RESULT=True）
-SERVER_IP = "10.135.164.87"         # 服务器 IP
+RESULT_IMAGE_NAME = os.path.join(SCRIPT_DIR, "top.jpg")   # 结果图文件名（仅当 SAVE_RESULT=True）
+SERVER_IP = "127.0.0.1"             # 服务器 IP
 
 # ================== 工具函数 ==================
 def merge_contours(contours, distance_threshold=20):
@@ -282,7 +283,7 @@ def process_top_view(input_path):
     return img, real_diameter
 
 # ================== HTTP 发送函数（支持内存图像） ==================
-def send_image_from_bytes(image_bytes, image_type, server_ip="172.16.100.136"):
+def send_image_from_bytes(image_bytes, image_type, server_ip):
     """
     将内存中的 JPEG/PNG 字节串发送到服务器。
     image_bytes: 图像文件的二进制数据（如 cv2.imencode 结果）
@@ -323,7 +324,7 @@ def send_image_from_bytes(image_bytes, image_type, server_ip="172.16.100.136"):
         print(f"❌ 发送异常：{e}")
         return False
 
-def send_image_from_file(image_path, image_type, server_ip="172.16.100.136"):
+def send_image_from_file(image_path, image_type, server_ip):
     """兼容旧接口：从文件读取并发送"""
     try:
         with open(image_path, "rb") as f:
@@ -371,7 +372,7 @@ def main():
     # ---- 5. 发送平视图 (front_view) ----
     # 这里根据你的实际情况：如果 front.jpg 已经存在，可直接从文件发送（仅读一次）；
     # 若未来平视图也由程序生成，可类似地用内存方式发送。
-    front_image = "front.jpg"
+    front_image = os.path.join(SCRIPT_DIR, "front.jpg")
     if os.path.exists(front_image):
         print("\n📷 发送平视图 (front_view)...")
         send_image_from_file(front_image, "front_view", SERVER_IP)

@@ -30,7 +30,7 @@
                   <h4 style="margin-bottom: 12px; font-size: 14px; color: #606266;">平视摄像头</h4>
                   <div class="detection-sidelooking-image-container">
                     <div v-if="frontImage" class="detection-image">
-                      <img :src="'data:image/png;base64,' + frontImage" alt="平视检测画面" />
+                      <img :src="'data:image/jpeg;base64,' + frontImage" alt="平视检测画面" />
                     </div>
                     <div v-else class="detection-placeholder">
                       <el-icon :size="48" color="#c0c4cc"><Monitor /></el-icon>
