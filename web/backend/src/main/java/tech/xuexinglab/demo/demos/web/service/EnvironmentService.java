@@ -98,7 +98,7 @@ public class EnvironmentService {
                 user.setLightIntensity(null);
             }
         }
-        // ★ TVOC 替换 pH
+        // TVOC 
         if (user.getTotalVolatileOrganicCompounds() != null) {
             if (user.getTotalVolatileOrganicCompounds() < 0 || user.getTotalVolatileOrganicCompounds() > 5000) {
                 user.setTotalVolatileOrganicCompounds(null);
