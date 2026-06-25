@@ -2,7 +2,7 @@ import { ref, watch } from 'vue';
 import { useWebSocket } from './websocket';
 
 
-const USE_LOCAL = true;
+const USE_LOCAL = false;
 const LOCAL_PATH = '/test_images';
 export { USE_LOCAL, LOCAL_PATH };
 
