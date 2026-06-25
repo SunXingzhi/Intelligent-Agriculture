@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tech.xuexinglab.demo.demos.web.entity.FrontViewData;
-import tech.xuexinglab.demo.demos.web.entity.TomatoInfo;
 import tech.xuexinglab.demo.demos.web.entity.TopViewData;
 import tech.xuexinglab.demo.demos.web.mapper.FrontViewMapper;
 import tech.xuexinglab.demo.demos.web.mapper.TopViewMapper;
@@ -77,12 +76,9 @@ public class ImageService {
             throw new RuntimeException("缺少必要字段: deviceAlias, imageIndex, imageData, tomatoList");
         }
 
-        // 转换为 TomatoInfo 列表
-        List<TomatoInfo> tomatoInfoList = objectMapper.convertValue(rawTomatoList,
-                objectMapper.getTypeFactory().constructCollectionType(List.class, TomatoInfo.class));
-
-        int count = tomatoInfoList.size();
-        String formattedTomatoList = formatTomatoList(tomatoInfoList);   // "fully_ripened：0.95/green：0.88/..."
+        // 直接从 rawTomatoList 生成格式化字符串
+        String formattedTomatoList = formatTomatoListFromRaw(rawTomatoList);
+        int count = rawTomatoList.size();
 
         // 保存图片到本地
         byte[] imageBytes = decodeBase64Image(imageData);
@@ -94,7 +90,7 @@ public class ImageService {
         record.setImageIndex(imageIndex);
         record.setRecordTime(parseTime(timestamp));
         record.setTomatoCount(count);
-        record.setTomatoList(formattedTomatoList);   // 直接存储格式化字符串
+        record.setTomatoList(formattedTomatoList);   // 存入字符串
         record.setImageData(imageData);             // 仅用于推送
 
         frontViewMapper.insert(record);
@@ -110,7 +106,7 @@ public class ImageService {
         resp.put("tomatoCount", count);
         resp.put("timestamp", record.getRecordTime().toString());
         resp.put("imagePath", savedImagePath);
-        resp.put("tomatoList", formattedTomatoList);   // API 响应中也返回格式化字符串
+        resp.put("tomatoList", formattedTomatoList);   // 返回格式化字符串
         return resp;
     }
 
@@ -202,18 +198,22 @@ public class ImageService {
 
     // ========== 工具方法 ==========
     /**
-     * 将 TomatoInfo 列表格式化为字符串
+     * 从原始 List（每个元素是 Map）生成格式：fully_ripened：0.95/green：0.88/...
      */
-    private String formatTomatoList(List<TomatoInfo> list) {
-        if (list == null || list.isEmpty()) return "";
-        return list.stream()
-                .map(t -> t.getRipeness() + "：" + t.getConfidence())
+    @SuppressWarnings("unchecked")
+    private String formatTomatoListFromRaw(List<?> rawList) {
+        if (rawList == null || rawList.isEmpty()) return "";
+        return rawList.stream()
+                .map(item -> {
+                    Map<String, Object> map = (Map<String, Object>) item;
+                    String ripeness = (String) map.get("ripeness");
+                    Object confidenceObj = map.get("confidence");
+                    String confidenceStr = confidenceObj != null ? confidenceObj.toString() : "?";
+                    return ripeness + "：" + confidenceStr;
+                })
                 .collect(Collectors.joining("/"));
     }
 
-    /**
-     * 保存图片到本地磁盘
-     */
     private String saveImageToLocal(byte[] imageBytes, String deviceAlias, int imageIndex, String viewType) {
         String subDir = uploadDir + File.separator + viewType;
         File dir = new File(subDir);
