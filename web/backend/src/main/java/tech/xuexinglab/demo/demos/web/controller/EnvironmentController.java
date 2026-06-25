@@ -16,7 +16,7 @@ import java.util.*;
 @RequestMapping("/api/environment")
 public class EnvironmentController {
 
-	// 使用final关键字，确保依赖不可变
+
 	private final EnvironmentService environmentService;
 
 	// 构造函数注入
