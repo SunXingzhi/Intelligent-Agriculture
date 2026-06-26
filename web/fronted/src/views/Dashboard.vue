@@ -96,7 +96,7 @@ const sensorMetrics = [
   { key: 'CarbonConcentration', label: 'CO₂ 浓度', unit: 'ppm', icon: 'iconfont icon-eryanghuatan', min: 400, max: 1000, color: '#67c23a' },
   { key: 'LightIntensity', label: '光照强度', unit: 'lux', icon: 'iconfont icon-guangzhaoqiangdu', min: 20000, max: 40000, color: '#e6a23c' },
   { key: 'SoilHumidity', label: '土壤湿度', unit: '%', icon: 'iconfont icon-turangshidu', min: 60, max: 80, color: '#9b59b6' },
-  { key: 'PH', label: 'pH 值', unit: '', icon: 'iconfont icon-PHzhi', min: 6.0, max: 7.5, color: '#1abc9c' },
+  { key: 'TotalVolatileOrganicCompounds', label: 'TVOC', unit: 'ppb', icon: 'iconfont icon-PHzhi', min: 0, max: 500, color: '#1abc9c' },
   { key: 'K', label: '土壤K含量', unit: 'mg/kg', icon: 'iconfont icon-turangjiahanliang', min: 100, max: 200, color: '#34495e' },
   { key: 'P', label: '土壤P含量', unit: 'mg/kg', icon: 'iconfont icon-turanglinhanliang', min: 50, max: 150, color: '#e67e22' },
   { key: 'N', label: '土壤N含量', unit: 'mg/kg', icon: 'iconfont icon-turangdanhanliang', min: 100, max: 300, color: '#2ecc71' }
