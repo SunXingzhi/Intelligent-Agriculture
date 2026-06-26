@@ -24,13 +24,13 @@ const totalItems = computed(() => allData.value.length)
 // 表格列配置
 const columns = [
   { prop: 'id', label: 'ID', width: 70 },
-  { prop: 'temperature', label: '温度(°C)', width: 100 },
-  { prop: 'humidity', label: '湿度(%)', width: 100 },
-  { prop: 'co2', label: 'CO₂(ppm)', width: 110 },
-  { prop: 'light', label: '光照(lux)', width: 120 },
-  { prop: 'soilMoisture', label: '土壤湿度(%)', width: 120 },
-  { prop: 'ph', label: 'pH', width: 80 },
-  { prop: 'recordedAt', label: '采集时间', minWidth: 160 }
+  { prop: 'Temperature', label: '温度(°C)', width: 100 },
+  { prop: 'AirHumidity', label: '湿度(%)', width: 100 },
+  { prop: 'CarbonConcentration', label: 'CO₂(ppm)', width: 110 },
+  { prop: 'LightIntensity', label: '光照(lux)', width: 120 },
+  { prop: 'SoilHumidity', label: '土壤湿度(%)', width: 120 },
+  { prop: 'TotalVolatileOrganicCompounds', label: 'TVOC(ppb)', width: 110 },
+  { prop: 'recordTime', label: '采集时间', minWidth: 160 }
 ]
 
 async function fetchAllData() {

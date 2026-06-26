@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <div class="page-header">
-      <h2>📈 统计分析</h2>
+      <h2> 统计分析</h2>
       <p>环境数据的统计汇总与趋势可视化分析</p>
     </div>
 
@@ -21,7 +21,7 @@
             <div class="stat-card stat-highlight">
               <div class="stat-label">湿度均值</div>
               <div class="stat-value" style="color: #409eff;">
-                {{ statistics?.avgHumidity ?? '--' }} %
+                {{ statistics?.avgAirHumidity ?? '--' }} %
               </div>
             </div>
           </el-col>
@@ -29,7 +29,7 @@
             <div class="stat-card stat-highlight">
               <div class="stat-label">CO₂ 均值</div>
               <div class="stat-value" style="color: #67c23a;">
-                {{ statistics?.avgCo2 ?? '--' }} ppm
+                {{ statistics?.avgCarbonConcentration ?? '--' }} ppm
               </div>
             </div>
           </el-col>
