@@ -91,13 +91,13 @@
 
         <!-- 检测说明 -->
         <div class="stat-card" style="margin-top: 16px;">
-          <h3 style="margin-bottom: 16px; font-size: 16px;">ℹ️ 检测说明</h3>
+          <h3 style="margin-bottom: 16px; font-size: 16px;">检测说明</h3>
           <el-descriptions :column="2" border size="small">
             <el-descriptions-item label="检测模型">YOLOv8n</el-descriptions-item>
-            <el-descriptions-item label="输入尺寸">640 × 640</el-descriptions-item>
+            <el-descriptions-item label="输入尺寸">1920*1080</el-descriptions-item>
             <el-descriptions-item label="检测频率">每 30 秒一帧</el-descriptions-item>
             <el-descriptions-item label="检测类别">青果 / 转色 / 成熟</el-descriptions-item>
-            <el-descriptions-item label="推理设备">Jetson Nano / 树莓派</el-descriptions-item>
+            <el-descriptions-item label="推理设备">RaspberryPi 5</el-descriptions-item>
             <el-descriptions-item label="数据上报">HTTP POST (JSON + Base64)</el-descriptions-item>
           </el-descriptions>
         </div>
