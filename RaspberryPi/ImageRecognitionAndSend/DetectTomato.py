@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-番茄成熟度检测模块（单张图片输入，返回标注图及结果列表）
+番茄成熟度检测模块（支持文件路径或numpy数组输入）
 """
 
 from ultralytics import YOLO
@@ -23,18 +23,22 @@ def get_model():
         _model = YOLO(model_path)
     return _model
 
-def detect_tomatoes(image_path):
+def detect_tomatoes(source):
     """
-    检测单张图片中的番茄
-    返回: (annotated_img, tomato_list)
-        annotated_img: numpy数组 (BGR)
-        tomato_list: [{"ripeness": str, "confidence": float}, ...]
+    检测番茄，返回 (annotated_img, tomato_list)
+    source: 文件路径(str) 或 numpy数组(BGR)
     """
     model = get_model()
-    results = model.predict(source=image_path, conf=0.25, save=False, workers=0)
+    
+    # 如果传入的是文件路径，YOLO可直接处理；若是数组，同样支持
+    results = model.predict(source=source, conf=0.25, save=False, workers=0)
     
     if not results:
-        img = cv2.imread(image_path)
+        # 返回原始图像（如果source是路径则读取，否则直接返回source）
+        if isinstance(source, str):
+            img = cv2.imread(source)
+        else:
+            img = source
         return img, []
 
     result = results[0]
@@ -48,7 +52,7 @@ def detect_tomatoes(image_path):
             conf = box.conf[0].item()
             tomato_list.append({"ripeness": ripeness, "confidence": conf})
 
-    annotated_img = result.plot()   # 内置的标注绘制函数，返回numpy数组
+    annotated_img = result.plot()   # 内置标注绘制，返回numpy数组
     return annotated_img, tomato_list
 
 if __name__ == "__main__":
