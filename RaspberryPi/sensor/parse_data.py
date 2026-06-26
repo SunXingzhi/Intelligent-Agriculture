@@ -1,5 +1,7 @@
 import serial
 import struct
+import sys
+import time
 
 # 帧长度常量
 FRAME_LEN	= 21	# 总长度（头2 + 长度1 + 数据17 + 校验1)
@@ -91,3 +93,33 @@ def read_sensor_frame(ser, timeout_ms):
 		'p': p,
 		'k': k
 	}
+
+def main():
+	PORT = 'COM3'
+	BAUDRATE = 115200
+	TIMEOUT_MS = 100
+
+	try:
+		ser = serial.Serial(PORT, BAUDRATE, timeout=0.1)
+		print(f"已打开串口 {PORT}，波特率 {BAUDRATE}")
+	except Exception as e:
+		print(f"打开串口失败: {e}")
+		sys.exit(1)
+
+	print("开始循环接收数据，按 Ctrl+C 退出...")
+	try:
+		while True:
+			data = read_sensor_frame(ser, TIMEOUT_MS)
+			if data:
+				print(data)   # 直接打印字典
+			else:
+				time.sleep(0.01)   # 避免CPU空转
+	except KeyboardInterrupt:
+		print("\n用户中断,程序退出")
+	finally:
+		ser.close()
+		print("串口已关闭")
+
+
+if __name__ == "__main__":
+    main()
