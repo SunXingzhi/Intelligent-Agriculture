@@ -2,5 +2,7 @@
         "java.compile.nullAnalysis.mode": "automatic",
         "java.configuration.updateBuildConfiguration": "interactive",
         "C_Cpp.default.compilerPath": "C:/ST/STM32CubeCLT_1.18.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe",
-        "cmake.sourceDirectory": "E:/Github_Project/Others/Intelligent-Agriculture/hardware/Project"
+        "cmake.sourceDirectory": "E:/Github_Project/Others/Intelligent-Agriculture/hardware/Project",
+        "python-envs.defaultEnvManager": "ms-python.python:conda",
+        "python-envs.defaultPackageManager": "ms-python.python:conda"
 }
