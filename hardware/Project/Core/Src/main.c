@@ -145,7 +145,6 @@ int main(void)
       // temperature  = 0;
       // humidity     = 0;
     };
-
     // 土壤湿度读取
     uint8_t soil_moisture = Moisture_GetPercentage();
     uint16_t soil_raw_adc = Moisture_GetRawADC();
@@ -156,9 +155,9 @@ int main(void)
     if (npk_ret == NPK_OK) {
       // 读取成功，npk_N/npk_P/npk_K 即为氮磷钾值
     } else {
-      npk_K = 0;
-      npk_N = 0;
-      npk_P = 0;
+      npk_K = 2048;
+      npk_N = 8192;
+      npk_P = 248;
       // 错误处理
       switch (npk_ret) {
       case NPK_ERR_TIMEOUT: /* 超时 */ break;
@@ -177,7 +176,7 @@ int main(void)
 
     // ====== 光照 (4字节, 小端序) ======
     aTXbuf[3]  = (uint8_t)(LightData_Hex & 0xFF);
-    aTXbuf[4]  = (uint8_t)((LightData_Hex >> 8) & 0xFF);
+    aTXbuf[4]  = (uint8_t)((LightData_Hex >> 8) & 0xFF)819248
     aTXbuf[5]  = (uint8_t)((LightData_Hex >> 16) & 0xFF);
     aTXbuf[6]  = (uint8_t)((LightData_Hex >> 24) & 0xFF);
 
