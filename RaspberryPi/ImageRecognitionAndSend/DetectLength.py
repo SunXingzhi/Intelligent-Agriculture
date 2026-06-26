@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-REAL_BLUE_SIDE_LENGTH = 0.2          # 蓝色正方形真实边长（米）
+REAL_BLUE_SIDE_LENGTH = 0.5          # 蓝色正方形真实边长（米）
 
 def merge_contours(contours, distance_threshold=20):
     """合并距离较近的轮廓（用于绿色物体）"""
@@ -37,7 +37,7 @@ def merge_contours(contours, distance_threshold=20):
     return merged
 
 def find_robust_blue_square(image):
-    """检测蓝色正方形，返回(w, h, box, contour, center)或None"""
+    """检测蓝色正方形（image为numpy数组）"""
     if image is None:
         return None
     height, width = image.shape[:2]
@@ -114,7 +114,7 @@ def find_robust_blue_square(image):
     return (w, h, box, contour, (cx, cy))
 
 def find_custom_green_object(image):
-    """检测绿色物体，返回(diameter, center, radius, contour)或None"""
+    """检测绿色物体（image为numpy数组）"""
     if image is None:
         return None
     height, width = image.shape[:2]
@@ -172,14 +172,17 @@ def find_custom_green_object(image):
         return None
     return best_object
 
-def process_top_view(image_path):
+def process_top_view(source):
     """
     处理俯视图，返回 (annotated_img, stem_diameter_mm)
-    失败返回 (None, None)
+    source: 文件路径(str) 或 numpy数组(BGR)
     """
-    img = cv2.imread(image_path)
+    if isinstance(source, str):
+        img = cv2.imread(source)
+    else:
+        img = source
     if img is None:
-        print(f"❌ 无法读取图片 {image_path}")
+        print("❌ 无法获取图像")
         return None, None
 
     blue_info = find_robust_blue_square(img)
@@ -189,7 +192,7 @@ def process_top_view(image_path):
     w, h, blue_box, blue_contour, blue_center = blue_info
 
     pixel_side = (w + h) / 2
-    scale = REAL_BLUE_SIDE_LENGTH / pixel_side  # 米/像素
+    scale = REAL_BLUE_SIDE_LENGTH / pixel_side
     print(f"比例尺: 1 像素 = {scale:.6f} 米")
 
     green_info = find_custom_green_object(img)
@@ -198,7 +201,6 @@ def process_top_view(image_path):
         return None, None
     green_diameter, green_center, green_radius, green_contour = green_info
 
-    # 真实直径 (米) → 毫米
     real_diameter_m = green_diameter * scale
     stem_diameter_mm = real_diameter_m * 1000.0
     print(f"🎯 茎粗: {stem_diameter_mm:.2f} mm")
@@ -217,5 +219,5 @@ def process_top_view(image_path):
 if __name__ == "__main__":
     img, dia = process_top_view("image.jpg")
     if img is not None:
-        cv2.imwrite("top_output.jpg", img)  # 可选保存
+        cv2.imwrite("top_output.jpg", img)
         print(f"茎粗: {dia:.2f} mm")
