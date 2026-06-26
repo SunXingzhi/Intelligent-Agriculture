@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-番茄监测主程序 - 双摄像头实时采集版
-依次执行：传感器数据 → 俯视图采集/处理/发送 → 前视图采集/处理/发送
+番茄监测主程序 - 双摄像头实时采集版（循环运行，每5秒一轮）
 """
 
 import serial
 import cv2
+import time
 from parse_data import read_sensor_frame
 from send_env_dat import send_environment_data
 from send_pla_dat import send_front_view, send_top_view
@@ -18,7 +18,7 @@ SERIAL_PORT = 'COM3'                # 传感器串口（Windows例），Linux如
 SERIAL_BAUDRATE = 9600
 TIMEOUT_MS = 2000
 
-# 两个USB摄像头索引（通常先插为0，后插为1，请根据实际调整）
+# 两个USB摄像头索引（请根据实际调整）
 TOP_CAM_INDEX = 0                   # 俯视图摄像头
 FRONT_CAM_INDEX = 1                 # 前视图摄像头
 
@@ -26,8 +26,11 @@ FRONT_CAM_INDEX = 1                 # 前视图摄像头
 FRAME_WIDTH = None
 FRAME_HEIGHT = None
 
-# 全局序号（如需持久化可保存至文件）
-image_counter = 124
+# 循环间隔（秒）
+INTERVAL_SECONDS = 5
+
+# 全局序号，从0开始，每轮加1
+image_counter = 0
 
 def capture_from_camera(cam_index, width=None, height=None):
     """
@@ -57,10 +60,14 @@ def capture_from_camera(cam_index, width=None, height=None):
     print(f"📸 摄像头 {cam_index} 捕获一帧，尺寸: {frame.shape[1]}x{frame.shape[0]}")
     return frame
 
-if __name__ == "__main__":
-    print("=" * 50)
-    print("番茄监测系统启动（双摄像头模式）")
-    print("=" * 50)
+def run_one_cycle(counter):
+    """
+    执行一次完整的采集、识别、发送流程
+    counter: 当前序号（top和front共用）
+    """
+    print(f"\n{'='*50}")
+    print(f"第 {counter} 轮开始")
+    print(f"{'='*50}")
 
     # ---- 1. 传感器数据 ----
     try:
@@ -91,9 +98,8 @@ if __name__ == "__main__":
             send_top_view(
                 image=top_img,
                 stem_diameter=stem_mm,
-                image_index=image_counter
+                image_index=counter
             )
-            image_counter += 1
         else:
             print("❌ 俯视图处理失败，跳过发送")
     else:
@@ -109,13 +115,25 @@ if __name__ == "__main__":
             send_front_view(
                 image=front_img,
                 tomato_list=tomato_list,
-                image_index=image_counter
+                image_index=counter
             )
-            image_counter += 1
         else:
             print("❌ 前视图处理失败，跳过发送")
     else:
         print("❌ 前视图摄像头采集失败，跳过")
 
-    print("\n" + "=" * 50)
-    print("所有任务完成")
+    print(f"\n第 {counter} 轮完成")
+
+if __name__ == "__main__":
+    print("=" * 50)
+    print("🍅 番茄监测系统启动（双摄像头循环模式）")
+    print(f"⏱  每 {INTERVAL_SECONDS} 秒执行一次")
+    print("=" * 50)
+
+    try:
+        while True:
+            run_one_cycle(image_counter)
+            image_counter += 1                      # 序号递增
+            time.sleep(INTERVAL_SECONDS)            # 等待指定间隔
+    except KeyboardInterrupt:
+        print("\n用户中断，程序退出。")
