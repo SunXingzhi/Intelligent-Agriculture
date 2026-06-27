@@ -29,7 +29,7 @@ const columns = [
   { prop: 'CarbonConcentration', label: 'CO₂(ppm)', width: 110 },
   { prop: 'LightIntensity', label: '光照(lux)', width: 120 },
   { prop: 'SoilHumidity', label: '土壤湿度(%)', width: 120 },
-  { prop: 'PH', label: 'pH', width: 80 },
+  { prop: 'TotalVolatileOrganicCompounds', label: 'TVOC(ppb)', width: 110 },
   { prop: 'recordTime', label: '采集时间', minWidth: 160 }
 ]
 

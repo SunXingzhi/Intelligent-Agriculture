@@ -152,6 +152,7 @@ public class ImageService {
     private void broadcastFrontView(FrontViewData record) {
         try {
             Map<String, Object> push = new HashMap<>();
+            push.put("type", "front-view");
 
             Map<String, Object> imagePart = new HashMap<>();
             imagePart.put("deviceAlias", record.getDeviceAlias());
@@ -176,6 +177,7 @@ public class ImageService {
     private void broadcastTopView(TopViewData record) {
         try {
             Map<String, Object> push = new HashMap<>();
+            push.put("type", "top-view");
 
             Map<String, Object> imagePart = new HashMap<>();
             imagePart.put("deviceAlias", record.getDeviceAlias());
