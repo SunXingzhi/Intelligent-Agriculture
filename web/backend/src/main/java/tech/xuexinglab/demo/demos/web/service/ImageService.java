@@ -37,8 +37,8 @@ public class ImageService {
     private final ObjectMapper objectMapper;
 
     public ImageService(SensorWebSocketHandler webSocketHandler,
-                        FrontViewMapper frontViewMapper,
-                        TopViewMapper topViewMapper) {
+            FrontViewMapper frontViewMapper,
+            TopViewMapper topViewMapper) {
         this.webSocketHandler = webSocketHandler;
         this.frontViewMapper = frontViewMapper;
         this.topViewMapper = topViewMapper;
@@ -90,8 +90,8 @@ public class ImageService {
         record.setImageIndex(imageIndex);
         record.setRecordTime(parseTime(timestamp));
         record.setTomatoCount(count);
-        record.setTomatoList(formattedTomatoList);   // 存入字符串
-        record.setImageData(imageData);             // 仅用于推送
+        record.setTomatoList(formattedTomatoList); // 存入字符串
+        record.setImageData(imageData); // 仅用于推送
 
         frontViewMapper.insert(record);
         broadcastFrontView(record);
@@ -106,7 +106,7 @@ public class ImageService {
         resp.put("tomatoCount", count);
         resp.put("timestamp", record.getRecordTime().toString());
         resp.put("imagePath", savedImagePath);
-        resp.put("tomatoList", formattedTomatoList);   // 返回格式化字符串
+        resp.put("tomatoList", formattedTomatoList); // 返回格式化字符串
         return resp;
     }
 
@@ -116,10 +116,10 @@ public class ImageService {
         Integer imageIndex = (Integer) data.get("imageIndex");
         String imageData = (String) data.get("imageData");
         String timestamp = (String) data.get("timestamp");
-        Double stemDiameter = data.get("stemDiameter") != null ?
-                ((Number) data.get("stemDiameter")).doubleValue() : null;
+        Double stemDiameter = data.get("stemDiameter") != null ? ((Number) data.get("stemDiameter")).doubleValue()
+                : null;
 
-        if (deviceAlias == null || imageIndex == null || imageData == null || stemDiameter == null) {
+        if (deviceAlias == null || imageIndex == null || imageData == null) {
             throw new RuntimeException("缺少必要字段: deviceAlias, imageIndex, imageData, stemDiameter");
         }
 
@@ -163,7 +163,7 @@ public class ImageService {
             Map<String, Object> dataPart = new HashMap<>();
             dataPart.put("tomatoCount", record.getTomatoCount());
             dataPart.put("recordTime", record.getRecordTime().toString());
-            dataPart.put("tomatoList", record.getTomatoList());   // 已经是格式化字符串
+            dataPart.put("tomatoList", record.getTomatoList()); // 已经是格式化字符串
             push.put("data", dataPart);
 
             String json = objectMapper.writeValueAsString(push);
@@ -204,7 +204,8 @@ public class ImageService {
      */
     @SuppressWarnings("unchecked")
     private String formatTomatoListFromRaw(List<?> rawList) {
-        if (rawList == null || rawList.isEmpty()) return "";
+        if (rawList == null || rawList.isEmpty())
+            return "";
         return rawList.stream()
                 .map(item -> {
                     Map<String, Object> map = (Map<String, Object>) item;
@@ -245,12 +246,28 @@ public class ImageService {
     }
 
     private LocalDateTime parseTime(String timestamp) {
-        if (timestamp == null || timestamp.isEmpty()) return LocalDateTime.now();
+        if (timestamp == null || timestamp.isEmpty())
+            return LocalDateTime.now();
         try {
             return LocalDateTime.parse(timestamp, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         } catch (Exception e) {
             log.warn("时间解析失败，使用当前时间: {}", timestamp);
             return LocalDateTime.now();
         }
+    }
+
+    /**
+     * 获取两个设备最新的照片序号
+     * 返回：frontLatestIndex 和 topLatestIndex
+     * 若表中无记录，对应值为 0
+     */
+    public Map<String, Object> getLatestImageIndexes() {
+        Integer frontIndex = frontViewMapper.findLatestImageIndex();
+        Integer topIndex = topViewMapper.findLatestImageIndex();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("frontLatestIndex", frontIndex == null ? 0 : frontIndex);
+        result.put("topLatestIndex", topIndex == null ? 0 : topIndex);
+        return result;
     }
 }

@@ -17,6 +17,14 @@ public class ImageController {
         this.imageService = imageService;
     }
 
+    /**
+     * 获取最新的照片序号（供树莓派查询）
+     * GET /api/image/latest-index
+     */
+    @GetMapping("/latest-index")
+    public ResponseEntity<Map<String, Object>> getLatestIndex() {
+        return ResponseEntity.ok(imageService.getLatestImageIndexes());
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, Object>> uploadImage(@RequestBody Map<String, Object> requestData) {
