@@ -134,7 +134,7 @@ function initCharts() {
         markLine: {
           data: [
             { yAxis: 20, name: '下限', lineStyle: { color: '#e6a23c', type: 'dashed' } },
-            { yAxis: 30, name: '上限', lineStyle: { color: '#f56c6c', type: 'dashed' } }
+            { yAxis: 28, name: '上限', lineStyle: { color: '#f56c6c', type: 'dashed' } }
           ]
         }
       }],
@@ -159,8 +159,8 @@ function initCharts() {
         itemStyle: { color: '#409eff' },
         markLine: {
           data: [
-            { yAxis: 60, name: '下限', lineStyle: { color: '#e6a23c', type: 'dashed' } },
-            { yAxis: 80, name: '上限', lineStyle: { color: '#f56c6c', type: 'dashed' } }
+            { yAxis: 55, name: '下限', lineStyle: { color: '#e6a23c', type: 'dashed' } },
+            { yAxis: 70, name: '上限', lineStyle: { color: '#f56c6c', type: 'dashed' } }
           ]
         }
       }],

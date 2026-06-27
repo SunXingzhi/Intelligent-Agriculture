@@ -33,7 +33,7 @@ public class User {
     private Double lightIntensity;        // 光强(lux)
 
     @JsonProperty("TotalVolatileOrganicCompounds")
-    private Double totalVolatileOrganicCompounds;   // 总挥发性有机化合物 (TVOC，单位可选)
+    private Double totalVolatileOrganicCompounds;   // 总挥发性有机化合物 
 
     @JsonProperty("recordTime")
     private LocalDateTime recordTime;     // 记录时间
