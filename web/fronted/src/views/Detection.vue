@@ -95,7 +95,7 @@
           <el-descriptions :column="2" border size="small">
             <el-descriptions-item label="检测模型">YOLOv8n</el-descriptions-item>
             <el-descriptions-item label="输入尺寸">1920*1080</el-descriptions-item>
-            <el-descriptions-item label="检测频率">每 30 秒一帧</el-descriptions-item>
+            <el-descriptions-item label="检测频率">每 5 秒一帧</el-descriptions-item>
             <el-descriptions-item label="检测类别">青果 / 转色 / 成熟</el-descriptions-item>
             <el-descriptions-item label="推理设备">RaspberryPi 5</el-descriptions-item>
             <el-descriptions-item label="数据上报">HTTP POST (JSON + Base64)</el-descriptions-item>
