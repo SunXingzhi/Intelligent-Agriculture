@@ -52,7 +52,7 @@ public class EnvironmentService {
     private void validateAndCleanData(User user) {
         // 二氧化碳浓度
         if (user.getCarbonConcentration() != null) {
-            if (user.getCarbonConcentration() < 0 || user.getCarbonConcentration() > 10000) {
+            if (user.getCarbonConcentration() < 0 ) {
                 user.setCarbonConcentration(null);
             }
         }
@@ -76,31 +76,31 @@ public class EnvironmentService {
         }
         // 氮
         if (user.getNitrogen() != null) {
-            if (user.getNitrogen() < 0 || user.getNitrogen() > 1000) {
+            if (user.getNitrogen() < 0 ) {
                 user.setNitrogen(null);
             }
         }
         // 磷
         if (user.getPhosphorus() != null) {
-            if (user.getPhosphorus() < 0 || user.getPhosphorus() > 1000) {
+            if (user.getPhosphorus() < 0 ) {
                 user.setPhosphorus(null);
             }
         }
         // 钾
         if (user.getPotassium() != null) {
-            if (user.getPotassium() < 0 || user.getPotassium() > 1000) {
+            if (user.getPotassium() < 0 ) {
                 user.setPotassium(null);
             }
         }
         // 光强
         if (user.getLightIntensity() != null) {
-            if (user.getLightIntensity() < 0 || user.getLightIntensity() > 100000) {
+            if (user.getLightIntensity() < 0 ) {
                 user.setLightIntensity(null);
             }
         }
         // TVOC 
         if (user.getTotalVolatileOrganicCompounds() != null) {
-            if (user.getTotalVolatileOrganicCompounds() < 0 || user.getTotalVolatileOrganicCompounds() > 5000) {
+            if (user.getTotalVolatileOrganicCompounds() < 0 ) {
                 user.setTotalVolatileOrganicCompounds(null);
             }
         }
